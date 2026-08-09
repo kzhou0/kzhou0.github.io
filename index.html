@@ -1,1 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Kyle Zhou's project portfolio: healthcare access, developer tools, and applied ML."
+    />
+    <title>Kyle Zhou</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="goose" role="button" tabindex="0" aria-label="Tiny draggable goose" title="Drag me">
+      <span class="goose-bubble" aria-hidden="true">honk</span>
+      <span class="goose-tail"></span>
+      <span class="goose-body"></span>
+      <span class="goose-wing"></span>
+      <span class="goose-neck"></span>
+      <span class="goose-head">
+        <span class="goose-eye goose-eye-one"></span>
+        <span class="goose-eye goose-eye-two"></span>
+        <span class="goose-cheek"></span>
+        <span class="goose-beak"></span>
+      </span>
+      <span class="goose-leg goose-leg-one"></span>
+      <span class="goose-leg goose-leg-two"></span>
+    </div>
 
+    <main class="shell">
+      <header class="hero" aria-labelledby="intro-title">
+        <div>
+          <div class="intro">
+            <span class="intro-kicker">hi, i'm</span>
+            <h1 id="intro-title">Kyle Zhou</h1>
+            <p class="intro-line">
+              I build <em>healthcare access tools</em>,
+              <em>developer systems</em>, and applied ML projects that make
+              messy information easier to act on.
+            </p>
+          </div>
+          <p class="status">
+            <span>currently</span>
+            training ConcordCare's reranker / shaping TraceLens trace queries
+          </p>
+        </div>
+
+        <nav class="socials" aria-label="Social links">
+          <a class="icon-link" href="https://github.com/" aria-label="GitHub" title="GitHub">
+            <i data-lucide="github">GH</i>
+          </a>
+          <a class="icon-link" href="https://www.linkedin.com/" aria-label="LinkedIn" title="LinkedIn">
+            <i data-lucide="linkedin">in</i>
+          </a>
+          <a class="icon-link" href="mailto:kyle@example.com" aria-label="Email Kyle" title="Email">
+            <i data-lucide="mail">@</i>
+          </a>
+          <button class="icon-link theme-toggle" type="button" aria-label="Toggle dark theme" title="Toggle theme">
+            <i data-lucide="moon">mode</i>
+          </button>
+        </nav>
+      </header>
+
+      <section class="projects" aria-labelledby="projects-title">
+        <div class="section-heading">
+          <h2 id="projects-title">Check out my projects!</h2>
+        </div>
+
+        <div class="project-grid">
+          <article class="project">
+            <div class="project-main">
+              <span class="project-title">
+                ConcordCare Studio
+                <a
+                  class="project-link"
+                  href="https://github.com/kylezhou77/concordcare-studio"
+                  aria-label="Open ConcordCare Studio on GitHub"
+                >
+                  <i data-lucide="arrow-up-right">go</i>
+                </a>
+              </span>
+              <p>
+                AI-assisted provider matching for culturally competent care,
+                built around patient preferences, language access, insurance, and
+                transparent match explanations.
+              </p>
+            </div>
+            <div class="meta">
+              <span>2025</span>
+              <span>Python</span>
+              <span>React</span>
+              <span>FastAPI</span>
+              <span>Llama</span>
+              <span>pgvector</span>
+            </div>
+          </article>
+
+          <article class="project">
+            <div class="project-main">
+              <span class="project-title">
+                TraceLens
+                <a
+                  class="project-link"
+                  href="https://github.com/kylezhou77/tracelens"
+                  aria-label="Open TraceLens on GitHub"
+                >
+                  <i data-lucide="arrow-up-right">go</i>
+                </a>
+              </span>
+              <p>
+                Observability workbench that turns logs, traces, latency spikes,
+                and deployment changes into grouped timelines developers can use
+                to find where slow requests started.
+              </p>
+            </div>
+            <div class="meta">
+              <span>2025</span>
+              <span>TypeScript</span>
+              <span>Node.js</span>
+              <span>OpenTelemetry</span>
+              <span>ClickHouse</span>
+            </div>
+          </article>
+
+          <article class="project">
+            <div class="project-main">
+              <span class="project-title">
+                ChordCare
+                <a
+                  class="project-link"
+                  href="https://github.com/kylezhou77/chordcare"
+                  aria-label="Open ChordCare on GitHub"
+                >
+                  <i data-lucide="arrow-up-right">go</i>
+                </a>
+              </span>
+              <p>
+                Self-learning music therapy recommender that analyzes patient song
+                profiles and predicts tracks correlated with positive therapeutic
+                outcomes.
+              </p>
+            </div>
+            <div class="meta">
+              <span>2024</span>
+              <span>Python</span>
+              <span>React</span>
+              <span>CNN</span>
+              <span>Spotify API</span>
+            </div>
+          </article>
+
+          <article class="project">
+            <div class="project-main">
+              <span class="project-title">
+                Medical Data Visualization Dashboard
+                <a
+                  class="project-link"
+                  href="https://github.com/kylezhou77/medical-data-dashboard"
+                  aria-label="Open Medical Data Visualization Dashboard on GitHub"
+                >
+                  <i data-lucide="arrow-up-right">go</i>
+                </a>
+              </span>
+              <p>
+                Accessible dashboard for communicating olfactory and cognitive
+                test results to immigrant patients in high-need clinical settings.
+              </p>
+            </div>
+            <div class="meta">
+              <span>2025</span>
+              <span>Python</span>
+              <span>Tableau API</span>
+              <span>Clinical UX</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
