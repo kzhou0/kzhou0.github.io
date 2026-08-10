@@ -1,0 +1,11 @@
+{
+  "name": "kyle-zhou-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check script.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

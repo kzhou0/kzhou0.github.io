@@ -39,8 +39,9 @@ updateThemeIcon();
 const goose = document.querySelector(".goose");
 const hero = document.querySelector(".hero");
 const shell = document.querySelector(".shell");
+const techStrip = document.querySelector(".tech-strip");
 
-if (goose && hero && shell) {
+if (goose && hero && shell && techStrip) {
   const state = {
     x: 0,
     y: 0,
@@ -84,7 +85,7 @@ if (goose && hero && shell) {
 
   const topBarY = () => {
     const { height } = gooseSize();
-    return Math.round(hero.getBoundingClientRect().bottom + window.scrollY - height - 1);
+    return Math.round(techStrip.getBoundingClientRect().top + window.scrollY - height);
   };
 
   const setFacing = () => {
@@ -241,4 +242,288 @@ if (goose && hero && shell) {
 
   placeGoose();
   requestAnimationFrame(tick);
+}
+
+const doodleCanvas = document.querySelector("[data-doodle-canvas]");
+const clearDoodleButton = document.querySelector("[data-clear-doodle]");
+const gooseifyButton = document.querySelector("[data-gooseify]");
+const colorButtons = document.querySelectorAll("[data-color]");
+
+if (doodleCanvas) {
+  const ctx = doodleCanvas.getContext("2d");
+  const doodleState = {
+    strokes: [],
+    drawing: false,
+    currentStroke: null,
+    color: "#17231f",
+    lineWidth: 6,
+    animationFrame: null,
+    morphing: false,
+  };
+
+  const canvasSize = () => ({
+    width: doodleCanvas.clientWidth,
+    height: doodleCanvas.clientHeight,
+  });
+
+  const scaleCanvas = () => {
+    const { width, height } = canvasSize();
+    const ratio = window.devicePixelRatio || 1;
+    doodleCanvas.width = Math.round(width * ratio);
+    doodleCanvas.height = Math.round(height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  };
+
+  const canvasPoint = (event) => {
+    const rect = doodleCanvas.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+  };
+
+  const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+  const drawPath = (points, color = doodleState.color, width = doodleState.lineWidth) => {
+    if (points.length === 0) return;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+
+    for (let i = 1; i < points.length; i += 1) {
+      const previous = points[i - 1];
+      const current = points[i];
+      const midX = (previous.x + current.x) / 2;
+      const midY = (previous.y + current.y) / 2;
+      ctx.quadraticCurveTo(previous.x, previous.y, midX, midY);
+    }
+
+    const last = points.at(-1);
+    ctx.lineTo(last.x, last.y);
+    ctx.stroke();
+  };
+
+  const redrawDoodle = () => {
+    const { width, height } = canvasSize();
+    ctx.clearRect(0, 0, width, height);
+
+    doodleState.strokes.forEach((stroke) => {
+      drawPath(stroke.points, stroke.color, stroke.width);
+    });
+  };
+
+  const resamplePath = (points, count) => {
+    if (points.length === 0) return [];
+    if (points.length === 1) {
+      return Array.from({ length: count }, () => ({ ...points[0] }));
+    }
+
+    const segments = [];
+    let total = 0;
+
+    for (let i = 1; i < points.length; i += 1) {
+      const length = Math.max(0.001, distance(points[i - 1], points[i]));
+      total += length;
+      segments.push({ from: points[i - 1], to: points[i], start: total - length, length });
+    }
+
+    return Array.from({ length: count }, (_, index) => {
+      const target = count === 1 ? 0 : (index / (count - 1)) * total;
+      const segment = segments.find((item) => target <= item.start + item.length) || segments.at(-1);
+      const localT = (target - segment.start) / segment.length;
+
+      return {
+        x: segment.from.x + (segment.to.x - segment.from.x) * localT,
+        y: segment.from.y + (segment.to.y - segment.from.y) * localT,
+      };
+    });
+  };
+
+  const makeCurve = (count, pointAt) => (
+    Array.from({ length: count }, (_, index) => pointAt(count === 1 ? 0 : index / (count - 1)))
+  );
+
+  const ellipsePath = (cx, cy, rx, ry, start, end, count) => (
+    makeCurve(count, (t) => {
+      const angle = start + (end - start) * t;
+      return {
+        x: cx + Math.cos(angle) * rx,
+        y: cy + Math.sin(angle) * ry,
+      };
+    })
+  );
+
+  const gooseTemplatePaths = (width, height) => {
+    const sx = width / 640;
+    const sy = height / 330;
+    const p = (x, y) => ({ x: x * sx, y: y * sy });
+    const ellipse = (cx, cy, rx, ry, start, end, count) => (
+      ellipsePath(cx * sx, cy * sy, rx * sx, ry * sy, start, end, count)
+    );
+
+    return [
+      ellipse(308, 198, 145, 72, Math.PI * 0.04, Math.PI * 1.97, 170),
+      ellipse(310, 197, 83, 44, Math.PI * 0.12, Math.PI * 1.86, 88),
+      makeCurve(64, (t) => {
+        const angle = Math.PI * (1.07 + t * 0.52);
+        return p(184 + Math.cos(angle) * 73, 190 + Math.sin(angle) * 41);
+      }),
+      makeCurve(72, (t) => {
+        const y = 177 - t * 91;
+        const x = 438 - Math.sin(t * Math.PI) * 29 + t * 8;
+        return p(x, y);
+      }),
+      ellipse(476, 82, 40, 29, Math.PI * 0.2, Math.PI * 2.05, 76),
+      makeCurve(26, (t) => p(512 + t * 43, 84 + Math.sin(t * Math.PI) * 4)),
+      makeCurve(34, (t) => p(518 + t * 34, 94 + Math.sin(t * Math.PI) * 9)),
+      ellipse(489, 76, 4, 4, 0, Math.PI * 2, 20),
+      makeCurve(32, (t) => p(297 + t * 58, 274 + Math.sin(t * Math.PI) * 12)),
+      makeCurve(34, (t) => p(347 + t * 42, 274 + Math.sin(t * Math.PI) * 12)),
+      makeCurve(20, (t) => p(284 + t * 6, 267 + t * 36)),
+      makeCurve(20, (t) => p(372 - t * 4, 266 + t * 36)),
+      makeCurve(24, (t) => p(279 + t * 36, 304 + Math.sin(t * Math.PI) * 3)),
+      makeCurve(24, (t) => p(355 + t * 37, 302 + Math.sin(t * Math.PI) * 3)),
+    ];
+  };
+
+  const buildMorphPoints = () => {
+    const { width, height } = canvasSize();
+    const sourceRaw = doodleState.strokes.flatMap((stroke) => stroke.points);
+    const targetPaths = gooseTemplatePaths(width, height);
+    const targetRaw = targetPaths.flat();
+    const desiredPointCount = Math.min(760, Math.max(220, sourceRaw.length * 3, targetRaw.length));
+    const groupCounts = targetPaths.map((path) => (
+      Math.max(2, Math.round((path.length / targetRaw.length) * desiredPointCount))
+    ));
+    const countDrift = desiredPointCount - groupCounts.reduce((sum, count) => sum + count, 0);
+    groupCounts[0] += countDrift;
+
+    const target = [];
+    const groups = [];
+    let cursor = 0;
+
+    targetPaths.forEach((path, index) => {
+      const start = cursor;
+      const sampledPath = resamplePath(path, groupCounts[index]);
+      target.push(...sampledPath);
+      cursor += sampledPath.length;
+      groups.push({ start, end: cursor });
+    });
+
+    const source = resamplePath(sourceRaw, target.length);
+    return { source, target, groups };
+  };
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  const drawMorphFrame = ({ source, target, groups }, progress) => {
+    const eased = ease(progress);
+    const points = source.map((point, index) => ({
+      x: point.x + (target[index].x - point.x) * eased,
+      y: point.y + (target[index].y - point.y) * eased,
+    }));
+    const color = `rgb(${Math.round(23 - eased * 5)} ${Math.round(35 + eased * 55)} ${Math.round(31 + eased * 36)})`;
+
+    const { width, height } = canvasSize();
+    ctx.clearRect(0, 0, width, height);
+    groups.forEach((group) => {
+      drawPath(points.slice(group.start, group.end), color, 5);
+    });
+  };
+
+  const gooseify = () => {
+    if (doodleState.morphing) return;
+    if (doodleState.strokes.length === 0) {
+      return;
+    }
+
+    const morphPoints = buildMorphPoints();
+    const startedAt = performance.now();
+    doodleState.morphing = true;
+
+    const animate = (now) => {
+      const progress = Math.min(1, (now - startedAt) / 1150);
+      drawMorphFrame(morphPoints, progress);
+
+      if (progress < 1) {
+        doodleState.animationFrame = requestAnimationFrame(animate);
+        return;
+      }
+
+      doodleState.morphing = false;
+      doodleState.strokes = [];
+    };
+
+    doodleState.animationFrame = requestAnimationFrame(animate);
+  };
+
+  const beginDrawing = (event) => {
+    if (doodleState.morphing) return;
+    const point = canvasPoint(event);
+    doodleState.drawing = true;
+    doodleState.currentStroke = {
+      color: doodleState.color,
+      width: doodleState.lineWidth,
+      points: [point],
+    };
+    doodleState.strokes.push(doodleState.currentStroke);
+    doodleCanvas.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  };
+
+  const draw = (event) => {
+    if (!doodleState.drawing || !doodleState.currentStroke) return;
+    const point = canvasPoint(event);
+    const points = doodleState.currentStroke.points;
+    if (distance(points.at(-1), point) < 2) return;
+
+    points.push(point);
+    redrawDoodle();
+  };
+
+  const endDrawing = (event) => {
+    if (!doodleState.drawing) return;
+    doodleState.drawing = false;
+    doodleState.currentStroke = null;
+    try {
+      doodleCanvas.releasePointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture can be cleared by the browser if the gesture is cancelled.
+    }
+  };
+
+  const clearDoodle = () => {
+    window.cancelAnimationFrame(doodleState.animationFrame);
+    doodleState.strokes = [];
+    doodleState.currentStroke = null;
+    doodleState.drawing = false;
+    doodleState.morphing = false;
+    redrawDoodle();
+  };
+
+  colorButtons.forEach((button) => {
+    button.style.setProperty("--swatch", button.dataset.color);
+    button.addEventListener("click", () => {
+      doodleState.color = button.dataset.color;
+      colorButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+    });
+  });
+
+  doodleCanvas.addEventListener("pointerdown", beginDrawing);
+  doodleCanvas.addEventListener("pointermove", draw);
+  doodleCanvas.addEventListener("pointerup", endDrawing);
+  doodleCanvas.addEventListener("pointercancel", endDrawing);
+  clearDoodleButton?.addEventListener("click", clearDoodle);
+  gooseifyButton?.addEventListener("click", gooseify);
+  window.addEventListener("resize", () => {
+    scaleCanvas();
+    redrawDoodle();
+  });
+
+  scaleCanvas();
+  redrawDoodle();
 }
