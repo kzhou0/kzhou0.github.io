@@ -160,20 +160,6 @@ if (goose && hero && shell && techStrip) {
     }
   }, 3200);
 
-  goose.addEventListener("pointermove", (event) => {
-    if (!state.dragging || event.pointerId !== state.pointerId) return;
-
-    const limit = horizontalBounds();
-    updateVelocityFromPointer(event);
-    state.x = clamp(event.clientX + window.scrollX - state.grabX, limit.minX, limit.maxX);
-    state.y = clamp(
-      event.clientY + window.scrollY - state.grabY,
-      limit.minY,
-      topBarY(),
-    );
-    moveGoose();
-  });
-
   const releaseGoose = (event) => {
     if (!state.dragging || event.pointerId !== state.pointerId) return;
 
@@ -187,8 +173,24 @@ if (goose && hero && shell && techStrip) {
     }
   };
 
+  goose.addEventListener("pointermove", (event) => {
+    if (!state.dragging || event.pointerId !== state.pointerId) return;
+
+    const limit = horizontalBounds();
+    const floorY = topBarY();
+    const nextX = event.clientX + window.scrollX - state.grabX;
+    const nextY = event.clientY + window.scrollY - state.grabY;
+    updateVelocityFromPointer(event);
+    state.x = clamp(nextX, limit.minX, limit.maxX);
+    state.y = clamp(nextY, limit.minY, floorY);
+    moveGoose();
+
+    if (nextX !== state.x || nextY !== state.y) releaseGoose(event);
+  });
+
   goose.addEventListener("pointerup", releaseGoose);
   goose.addEventListener("pointercancel", releaseGoose);
+  goose.addEventListener("lostpointercapture", releaseGoose);
 
   const tick = (now) => {
     const dt = Math.min(0.032, (now - state.lastFrame) / 1000);
