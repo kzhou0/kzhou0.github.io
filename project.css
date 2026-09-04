@@ -99,8 +99,14 @@
   font-size: clamp(1rem, 1.8vw, 1.08rem);
 }
 
-.technical-entry [data-project-implementation] {
-  white-space: pre-line;
+.technical-part + .technical-part {
+  display: block;
+  margin-top: 22px;
+}
+
+.technical-part b {
+  color: var(--accent);
+  font-weight: 800;
 }
 
 @media (max-width: 620px) {
