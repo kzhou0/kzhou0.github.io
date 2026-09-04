@@ -160,17 +160,23 @@ if (goose && hero && shell && techStrip) {
     }
   }, 3200);
 
-  const releaseGoose = (event) => {
-    if (!state.dragging || event.pointerId !== state.pointerId) return;
-
+  const dropGoose = () => {
+    if (!state.dragging) return;
+    const pointerId = state.pointerId;
     state.dragging = false;
     state.pointerId = null;
     goose.classList.remove("is-dragging");
     try {
-      goose.releasePointerCapture(event.pointerId);
+      if (pointerId !== null && goose.hasPointerCapture(pointerId)) {
+        goose.releasePointerCapture(pointerId);
+      }
     } catch {
       // Pointer capture may already be gone if the browser cancelled the drag.
     }
+  };
+
+  const releaseGoose = (event) => {
+    if (event.pointerId === state.pointerId) dropGoose();
   };
 
   goose.addEventListener("pointermove", (event) => {
@@ -178,6 +184,8 @@ if (goose && hero && shell && techStrip) {
 
     const limit = horizontalBounds();
     const floorY = topBarY();
+    const shellBox = shell.getBoundingClientRect();
+    const stripTop = techStrip.getBoundingClientRect().top;
     const nextX = event.clientX + window.scrollX - state.grabX;
     const nextY = event.clientY + window.scrollY - state.grabY;
     updateVelocityFromPointer(event);
@@ -185,11 +193,22 @@ if (goose && hero && shell && techStrip) {
     state.y = clamp(nextY, limit.minY, floorY);
     moveGoose();
 
-    if (nextX !== state.x || nextY !== state.y) releaseGoose(event);
+    const pointerLeftCage = event.clientX < shellBox.left
+      || event.clientX > shellBox.right
+      || event.clientY < 0
+      || event.clientY > stripTop;
+    if (pointerLeftCage || nextX !== state.x || nextY !== state.y) dropGoose();
   });
 
-  goose.addEventListener("pointerup", releaseGoose);
-  goose.addEventListener("pointercancel", releaseGoose);
+  window.addEventListener("pointerup", releaseGoose, true);
+  window.addEventListener("pointercancel", releaseGoose, true);
+  window.addEventListener("blur", dropGoose);
+  document.addEventListener("pointerout", (event) => {
+    if (!event.relatedTarget) dropGoose();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) dropGoose();
+  });
   goose.addEventListener("lostpointercapture", releaseGoose);
 
   const tick = (now) => {
