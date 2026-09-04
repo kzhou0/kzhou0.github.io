@@ -32,48 +32,26 @@
         <h1 data-project-name></h1>
         <p class="case-summary" data-project-summary></p>
         <div class="case-tags" data-project-tags aria-label="Technologies"></div>
-        <a class="case-action" href="#demo">
-          Try the preview
-          <i data-lucide="arrow-down" aria-hidden="true"></i>
-        </a>
       </header>
 
-      <section class="case-purpose" aria-labelledby="purpose-title">
-        <h2 id="purpose-title">Why I built it</h2>
-        <p data-project-purpose></p>
-      </section>
-
-      <section class="case-demo-section" id="demo" aria-labelledby="demo-title">
-        <div class="case-section-heading">
-          <h2 id="demo-title">Quick demo</h2>
-          <p>Interactive preview with sample data. Nothing leaves your browser.</p>
+      <dl class="case-notes">
+        <div>
+          <dt>Why I built it</dt>
+          <dd data-project-purpose></dd>
         </div>
-        <div class="case-demo" data-project-demo></div>
-      </section>
-
-      <section class="case-build" aria-labelledby="build-title">
-        <h2 id="build-title">How it works</h2>
-        <div class="build-flow" data-project-flow></div>
-      </section>
-
-      <section class="case-reflection" aria-label="Project reflection">
-        <article>
-          <h2>Hardest part</h2>
-          <p data-project-challenge></p>
-        </article>
-        <article>
-          <h2>What I learned</h2>
-          <p data-project-learning></p>
-        </article>
-      </section>
-
-      <nav class="next-project" aria-label="Next project">
-        <span>Next project</span>
-        <a data-next-link href="#">
-          <strong data-next-name></strong>
-          <i data-lucide="arrow-up-right" aria-hidden="true"></i>
-        </a>
-      </nav>
+        <div>
+          <dt>How I implemented it</dt>
+          <dd data-project-implementation></dd>
+        </div>
+        <div>
+          <dt>Hardest part</dt>
+          <dd data-project-challenge></dd>
+        </div>
+        <div>
+          <dt>What I learned</dt>
+          <dd data-project-learning></dd>
+        </div>
+      </dl>
     </main>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
