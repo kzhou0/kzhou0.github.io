@@ -1,5 +1,5 @@
 .case-shell {
-  width: min(760px, calc(100% - 44px));
+  width: min(860px, calc(100% - 44px));
   margin: 0 auto;
   padding: 28px 0 64px;
 }
@@ -31,7 +31,8 @@
 }
 
 .case-hero {
-  padding: 72px 0 54px;
+  max-width: 720px;
+  padding: 82px 0 68px;
 }
 
 .case-year {
@@ -73,48 +74,40 @@
   font-weight: 700;
 }
 
-.case-notes {
+.case-story {
+  max-width: 720px;
   margin: 0;
 }
 
-.case-notes > div {
-  display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
-  gap: 38px;
-  padding: 30px 0;
+.case-story p {
+  margin: 0;
+  padding: 42px 0;
   border-top: 1px solid rgb(var(--ink-rgb) / 13%);
-}
-
-.case-notes dt {
-  color: var(--accent);
-  font-size: 0.92rem;
-  font-weight: 800;
-}
-
-.case-notes dd {
-  margin: 0;
   color: rgb(var(--ink-rgb) / 70%);
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.8vw, 1.12rem);
   font-weight: 600;
-  line-height: 1.7;
+  line-height: 1.78;
+}
+
+.case-story strong {
+  color: var(--ink);
+  font-weight: 800;
 }
 
 @media (max-width: 620px) {
   .case-shell {
-    width: min(100% - 30px, 760px);
+    width: min(100% - 30px, 860px);
   }
 
   .case-hero {
-    padding: 56px 0 42px;
+    padding: 58px 0 46px;
   }
 
   .case-hero h1 {
     font-size: clamp(3rem, 16vw, 4.8rem);
   }
 
-  .case-notes > div {
-    grid-template-columns: 1fr;
-    gap: 8px;
-    padding: 25px 0;
+  .case-story p {
+    padding: 32px 0;
   }
 }
