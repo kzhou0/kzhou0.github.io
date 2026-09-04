@@ -94,6 +94,15 @@
   font-weight: 800;
 }
 
+.case-story .technical-entry {
+  color: rgb(var(--ink-rgb) / 76%);
+  font-size: clamp(1rem, 1.8vw, 1.08rem);
+}
+
+.technical-entry [data-project-implementation] {
+  white-space: pre-line;
+}
+
 @media (max-width: 620px) {
   .case-shell {
     width: min(100% - 30px, 860px);
