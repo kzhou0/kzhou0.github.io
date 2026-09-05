@@ -22,6 +22,29 @@ const projects = {
     challenge: "Combining incomplete public provider records with patient preferences without presenting uncertain data as fact. The system keeps reported facts, inferred matches, and missing information visibly separate.",
     learning: "Trust is part of the technical design. A useful ranking needs evidence, explanations, and a clear path for people to verify details before relying on a result.",
   },
+  proktcvae: {
+    name: "ProkTCVAE",
+    year: "2025",
+    summary: "A hierarchical SetVAE that reconstructs bacterial proteomes from protein language model embeddings.",
+    tags: ["Python", "PyTorch", "ESM-2", "SetVAE"],
+    purpose: "Draft genomes and metagenome-assembled genomes can lose genes that make otherwise coherent pathways appear incomplete. I built ProkTCVAE to test whether the rest of a bacterium's proteome contains enough organism-level context to prioritize which conserved proteins may be missing, complementing broad completeness scores with protein-level hypotheses. The system is intended to guide downstream annotation and metabolic gap analysis, not replace sequence homology, genomic context, or experimental validation.",
+    implementation: [
+      {
+        label: "Architecture",
+        text: "I represented each genome as a variable-cardinality N x 480 tensor of mean-pooled protein embeddings from the ESM-2 esm2_t12_35M_UR50D protein language model. A hierarchical SetVAE implemented in Python and PyTorch consumes each proteome as an unordered set, so the model is invariant to protein order and does not assume alignment between input and reconstructed indices. Mini-batches pad genomes to the largest set in the batch and carry Boolean masks through every attention and loss operation. The encoder and decoder use Induced Set Attention Blocks with learned inducing points, reducing the cost of full set attention while allowing soft genome-level slots to emerge from the data. Bottom-up encoder features parameterize a hierarchy of approximate posteriors; top-down decoder features parameterize learned priors. During posterior reconstruction, a learned initial set is decoded to the same cardinality as the source proteome, while prior sampling can generate a set without conditioning on an observed genome.",
+      },
+      {
+        label: "Core pipeline",
+        text: "I trained the model on 13,840 bacterial genomes containing 55,119,457 proteins and reserved 1,573 genomes with 5,682,299 proteins for heldout evaluation. The data pipeline optionally standardizes embedding dimensions with dataset-level means and standard deviations, then constructs padded variable-length batches and masks. The objective combines bidirectional cosine Chamfer reconstruction, multiscale radial-basis-function maximum mean discrepancy, and a sampled contrastive term that selects high-error reconstructions, uses their nearest source proteins as positives, and draws hard negatives from the same genome plus proteins from other genomes. Additional losses match pairwise cosine-distance quantiles, penalize duplicate-like outputs relative to the input's local density, balance inducing-slot usage, separate slot representations, sharpen assignments, limit assignment overlap, and preserve slot-to-latent consistency. Checkpoints store model weights, hyperparameters, normalization statistics, loss histories, and attention assignments so training runs and learned slots can be compared reproducibly.",
+      },
+      {
+        label: "Reliability and delivery",
+        text: "I evaluated reconstruction on 100 genomes, split evenly between training and heldout data, against a 100,000-protein background bank. Exact source-protein retrieval reached 11.04% at top-1 versus 3.54% under matched random controls, 33.32% at top-5 versus 16.38%, and 47.92% at top-10 versus 29.87%; nearly identical heldout and training top-1 rates, 11.29% and 10.80%, argued against simple memorization. Maximum-cardinality bipartite matching assigned 71.09% of source proteins to unique reconstructions at cosine similarity at least 0.95, but only 0.66% exceeded 0.99, establishing that the model recovered protein neighborhoods rather than exact identities. Collapse diagnostics measured source occupancy, nearest-neighbor sink size, near-duplicate outputs, effective rank, centroid preservation, pairwise-distance quantiles, local density, MMD, energy distance, and Sinkhorn transport. In targeted Escherichia coli K-12 MG1655 experiments, removing complete pathways and reconstructing the proteome recovered tryptophan biosynthesis proteins at 83.3% top-25 versus 38.7% for size-matched random removals with AUROC 0.96, and histidine biosynthesis at 66.7% versus 38.2% with AUROC 0.98.",
+      },
+    ],
+    challenge: "Bacterial protein embeddings already occupy a dense manifold, so a high cosine score can make a weak reconstruction look convincing. The hardest part was separating local embedding similarity from genome-specific recovery with matched random controls, unique bipartite assignments, collapse diagnostics, and pathway-level ablations.",
+    learning: "Whole-proteome composition contains recoverable biological signal, especially for conserved metabolic and informational systems such as translation, replication, amino acid synthesis, and central carbon metabolism. Transport, membrane, mobile, and phage-associated proteins were much harder, showing that a set-only model can prioritize plausible missing functions but cannot yet recover exact protein identity or the gene-order context carried by operons and chromosomes.",
+  },
   lionplan: {
     name: "LionPlan",
     year: "2026",
