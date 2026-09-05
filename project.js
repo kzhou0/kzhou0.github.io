@@ -22,12 +22,12 @@ const projects = {
     challenge: "Combining incomplete public provider records with patient preferences without presenting uncertain data as fact. The system keeps reported facts, inferred matches, and missing information visibly separate.",
     learning: "Trust is part of the technical design. A useful ranking needs evidence, explanations, and a clear path for people to verify details before relying on a result.",
   },
-  proktcvae: {
-    name: "ProkTCVAE",
+  bacsetvae: {
+    name: "BacSetVAE",
     year: "2025",
     summary: "A hierarchical SetVAE that reconstructs bacterial proteomes from protein language model embeddings.",
     tags: ["Python", "PyTorch", "ESM-2", "SetVAE"],
-    purpose: "Draft genomes and metagenome-assembled genomes can lose genes that make otherwise coherent pathways appear incomplete. I built ProkTCVAE to test whether the rest of a bacterium's proteome contains enough organism-level context to prioritize which conserved proteins may be missing, complementing broad completeness scores with protein-level hypotheses. The system is intended to guide downstream annotation and metabolic gap analysis, not replace sequence homology, genomic context, or experimental validation.",
+    purpose: "Draft genomes and metagenome-assembled genomes can lose genes that make otherwise coherent pathways appear incomplete. I built BacSetVAE to test whether the rest of a bacterium's proteome contains enough organism-level context to prioritize which conserved proteins may be missing, complementing broad completeness scores with protein-level hypotheses. The system is intended to guide downstream annotation and metabolic gap analysis, not replace sequence homology, genomic context, or experimental validation.",
     implementation: [
       {
         label: "Architecture",
