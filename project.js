@@ -130,49 +130,6 @@ if (requestedProject === "bacsetvae") {
   </figure>`;
 }
 
-if (requestedProject === "chordcare") {
-  const profiles = [
-    {
-      name: "Maya", taste: "Acoustic folk · gentle vocals · familiar melodies",
-      goal: "An evening wind-down",
-      tracks: [
-        ["Pink Moon", "Nick Drake", "Acoustic texture and a restrained arrangement fit the listening profile."],
-        ["River", "Joni Mitchell", "Piano and familiar singer-songwriter phrasing keep the selection close to existing taste."],
-        ["Bloom", "The Paper Kites", "A gentle acoustic arrangement introduces a discovery within the same musical palette."],
-      ],
-    },
-    {
-      name: "Alex", taste: "Soul · upbeat pop · strong rhythmic grooves",
-      goal: "A more energetic afternoon",
-      tracks: [
-        ["Lovely Day", "Bill Withers", "A steady groove connects with the profile’s preference for soul."],
-        ["Put Your Records On", "Corinne Bailey Rae", "Melodic vocals bridge familiar soul and lighter pop."],
-        ["September", "Earth, Wind & Fire", "A prominent rhythm section matches the preference for energetic arrangements."],
-      ],
-    },
-  ];
-  demo.hidden = false;
-  demo.setAttribute("aria-labelledby", "chordcare-demo-title");
-  demo.innerHTML = `<h2 id="chordcare-demo-title">A different listener. A different playlist.</h2>
-    <p class="demo-note">Illustrative demo with fictional profiles and curated tracks; these are not model predictions or measured therapeutic outcomes.</p>
-    <div class="profile-picker" role="group" aria-label="Choose an example listener">
-      ${profiles.map((profile, index) => `<button type="button" data-listener="${index}" aria-pressed="${index === 0}">${profile.name}</button>`).join("")}
-    </div>
-    <div data-listener-results aria-live="polite" aria-atomic="true"></div>`;
-  const renderListener = (index) => {
-    const profile = profiles[index];
-    demo.querySelectorAll("[data-listener]").forEach((button) => {
-      button.setAttribute("aria-pressed", String(Number(button.dataset.listener) === index));
-    });
-    demo.querySelector("[data-listener-results]").innerHTML = `
-      <div class="listener-profile"><p class="listener-taste">${profile.taste}</p><p class="listener-goal">${profile.goal}</p></div>
-      <ol class="track-list">${profile.tracks.map(([title, artist, reason]) => `<li><div class="track-heading"><strong>${title}</strong><span>${artist}</span></div><p>${reason}</p></li>`).join("")}</ol>`;
-  };
-  demo.querySelectorAll("[data-listener]").forEach((button) => {
-    button.addEventListener("click", () => renderListener(Number(button.dataset.listener)));
-  });
-  renderListener(0);
-}
 
 document.title = `${project.name} | Kyle Zhou`;
 document.querySelector('meta[name="description"]').content = project.summary;
